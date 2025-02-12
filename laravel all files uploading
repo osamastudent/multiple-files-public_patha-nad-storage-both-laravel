@@ -355,3 +355,28 @@ class FilesController extends Controller
     return back()->with('success', 'File uploaded successfully!');
     }
 }
+
+# blade this file
+  <tbody>
+            @foreach($showFiles as $showfile)
+            <tr>
+                <td>{{$loop->iteration}}</td>
+                <td>{{$showfile->name}}</td>
+                @php
+            $explodeFiles = explode(',', $showfile->file); // Convert comma-separated string to array
+        @endphp
+
+        <td>
+            @foreach($explodeFiles as $file)
+                <img src="{{ asset('/storage/myfiles/' . $file) }}" height="80">
+            @endforeach
+        </td>
+
+                <td>{{$showfile->file_ext}}</td>
+                <td>{{$showfile->file_size}}</td>
+                <td>
+                    <a href="{{route('edit.file',$showfile->id)}}">Edit</a>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
