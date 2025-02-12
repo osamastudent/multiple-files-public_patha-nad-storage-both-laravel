@@ -1,0 +1,357 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\MyFiles;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+
+class FilesController extends Controller
+{
+
+    // form
+    public function filesForm()
+    {
+        return view('files.index');
+    }
+
+    // store single file
+    // public function filesFormStore(Request $request)
+    // {
+    //     $file = $request->file('file');
+    //     $fileName = '';
+    //     if ($file) {
+    //         $fileName = now()->timestamp . uniqid() . '.' . "random.png";
+    //         $file->storeAs('myfiles', $fileName, 'public');
+    //     }
+    //     MyFiles::create([
+    //         'name' => $request->name,
+    //         'file' => $fileName,
+    //         'file_size' => $file ? $file->getSize() : null,
+    //         'file_ext' => $file ? $file->getClientOriginalExtension() : null,
+    //     ]);
+    //     return back()->with('success', 'File uploaded successfully!');
+    // }
+
+    // show files
+    public function showFiles()
+    {
+        // dd("Ddd");
+        $showFiles = MyFiles::orderBy('created_at', 'desc')->get();
+        return view('files.show_files', compact('showFiles'));
+    }
+    // edit files
+    public function editFile($id)
+    {
+        // dd("Ddd");
+        $showFile = MyFiles::find($id);
+        return view('files.edit', compact('showFile'));
+    }
+
+    // // update files
+    // public function updateFile(Request $request, $id)
+    // {
+    //     // dd("Ddd");
+    //     $showFile = MyFiles::findOrFail($id);
+
+    //     $fileName = $showFile->file;
+    //     $fileExt = $showFile->file_ext;
+    //     $fileSize = $showFile->file_size;
+
+    //     $file = $request->file('file');
+    //     if ($file) {
+    //         $fileName = now()->timestamp . uniqid() . '.' . 'random.png';
+    //         $file->storeAs('myfiles', $fileName, 'public');
+    //         $oldPath = 'myfiles/' . $showFile->file;
+    //         if (Storage::disk('public')->exists($oldPath)) {
+    //             Storage::disk('public')->delete($oldPath);
+    //         }
+    //         $fileExt = $file->getClientOriginalExtension();
+    //         $fileSize = $file->getSize();
+    //     }
+
+    //     $showFile->update([
+    //         'name' => $request->name ?? $showFile->name,
+    //         'file' => $fileName,
+    //         'file_ext' => $fileExt,
+    //         'file_size' => $fileSize,
+    //     ]);
+
+    //     return back()->with('success', 'File uploaded successfully!');
+    // }
+
+
+
+    // store in multiple rows
+    // public function filesFormStore(Request $request)
+    // {
+    //     $files = $request->file('file');
+
+    //     if ($files) {
+    //         foreach ($files as $file) {
+    //             $fileName = now()->timestamp . uniqid() . '.' . $file->getClientOriginalExtension();
+    //             $file->storeAs('myfiles', $fileName, 'public');
+
+    //             // Store each file as a new row in the database
+    //             MyFiles::create([
+    //                 'name' => $request->name,
+    //                 'file' => $fileName,
+    //                 'file_size' => $file->getSize(),
+    //                 'file_ext' => $file->getClientOriginalExtension(),
+    //             ]);
+    //         }
+    //     }
+
+    //     return back()->with('success', 'Files uploaded successfully!');
+    // }
+
+
+    // store multiple files in single row 
+    // public function filesFormStore(Request $request)
+    // {
+    //     $files = $request->file('file');
+
+    //     $multipleFiles=[];
+    //     $fileSizes = [];
+    //     $fileExts = [];
+
+    //     if ($files) {
+    //         foreach ($files as $file) {
+    //             $fileName = now()->timestamp . uniqid() . '.png';
+    //             $file->storeAs('myfiles', $fileName, 'public');
+    //             $multipleFiles[]=$fileName;
+    //             $fileExts[]=$file->getClientOriginalExtension();
+    //             $fileSizes[]=$file->getSize();
+    //             }
+    //     }
+
+    //     $implodeFiles=implode(',', $multipleFiles);
+    //     $implodeSizes=implode(',', $fileSizes);
+    //     $implodeExts=implode(',', $fileExts);
+
+    //     MyFiles::create([
+    //         'name' => $request->name,
+    //         'file' => $implodeFiles,
+    //         'file_size' => $implodeSizes,
+    //         'file_ext' => $implodeExts,
+    //     ]);
+
+    //     return back()->with('success', 'Files uploaded successfully!');
+    // }
+
+    // update multiple files in single row 
+    // public function updateFile(Request $request, $id)
+    // {
+    //     $showFile = MyFiles::findOrFail($id);
+    //     $files = $request->file('file');
+
+    //     // Initialize arrays
+    //     $multipleFiles = [];
+    //     $fileSizes = [];
+    //     $fileExts = [];
+
+
+    //     if ($files) {
+    //         // Purani files ko delete karein agar exist karti hain
+    //         $oldFiles = explode(',', $showFile->file);
+    //         foreach ($oldFiles as $oldFile) {
+    //             $oldPath = 'myfiles/' . $oldFile;
+    //             if (Storage::disk('public')->exists($oldPath)) {
+    //                 Storage::disk('public')->delete($oldPath);
+    //             }
+    //         }
+
+    //         foreach ($files as $file) {
+    //             $fileName = now()->timestamp . uniqid() . '.png';
+    //             $file->storeAs('myfiles', $fileName, 'public');
+    //             $multipleFiles[] = $fileName;
+    //             $fileExts[] = $file->getClientOriginalExtension();
+    //             $fileSizes[] = $file->getSize();
+    //         }
+
+    //         // Convert arrays to comma-separated strings
+    //         $implodeFiles = implode(',', $multipleFiles);
+    //         $implodeSizes = implode(',', $fileSizes);
+    //         $implodeExts = implode(',', $fileExts);
+    //     } else {
+    //         // If no new file uploaded, keep old values
+    //         $implodeFiles = $showFile->file;
+    //         $implodeSizes = $showFile->file_size;
+    //         $implodeExts = $showFile->file_ext;
+    //     }
+
+    //     $showFile->update([
+    //         'name' => $request->name ?? $showFile->name,
+    //         'file' => $implodeFiles,
+    //         'file_ext' => $implodeExts,
+    //         'file_size' => $implodeSizes,
+    //     ]);
+
+    //     return back()->with('success', 'Files updated successfully!');
+    // }
+
+
+    // store mutiple fields file
+    // public function filesFormStore(Request $request)
+    // {
+
+    //     $fields = ['file', 'file2'];
+    //     $multipleFiles = [];
+    //     $fileSizes = [];
+    //     $fileExts = [];
+    //     foreach ($fields as $field) {
+    //         $files = $request->file($field);
+    //         if ($files) {
+    //             $fileName = now()->timestamp . uniqid() . '.png';
+    //             $files->storeAs('myfiles', $fileName, 'public');
+    //             $multipleFiles[$field] = $fileName;
+    //             $fileSizes[$field] = $files->getSize();
+    //             $fileExts[$field] = $files->getClientOriginalExtension();
+    //         } else {
+    //             // Agar file upload nahi hui to null store karein
+    //             $multipleFiles[$field] = null;
+    //             $fileSizes[$field] = null;
+    //             $fileExts[$field] = null;
+    //         }
+    //     }
+
+
+
+    //     MyFiles::create([
+    //         'name' => $multipleFiles['file2'],
+    //         'file' =>  $multipleFiles['file'],
+    //         'file_size' => $fileSizes['file'] . ',' . $fileSizes['file2'],
+    //         'file_ext'  => $fileExts['file'] . ',' . $fileExts['file2'],
+    //     ]);
+
+    //     return back()->with('success', 'Files uploaded successfully!');
+    // }
+    // update mutiple fields file
+    // public function updateFile(Request $request, $id)
+    // {
+
+    //     $showFile = MyFiles::findOrFail($id);
+    //     // dd($showFile .'osama');
+    //     $fields = ['file', 'file2'];
+    //     $multipleFiles = [];
+    //     $fileSizes = [];
+    //     $fileExts = [];
+    //     // dd($request->all());
+    //     $oldFiles = [
+    //         'file'  => 'myfiles/' . $showFile->file,
+    //         'file2' => 'myfiles/' . $showFile->name,
+    //     ];
+
+    //     $file1=$showFile->file;
+    //     $file2=$showFile->name;
+
+
+    //     foreach ($fields as $field) {
+    //         $files = $request->file($field);
+    //         if ($files) {
+    //             if (Storage::disk('public')->exists($oldFiles[$field])) {
+    //                 Storage::disk('public')->delete($oldFiles[$field]);
+    //             }
+
+
+    //             $fileName = now()->timestamp . uniqid() . '.png';
+    //             $files->storeAs('myfiles', $fileName, 'public');
+    //             $multipleFiles[$field] = $fileName;
+    //             $fileSizes[$field] = $files->getSize();
+    //             $fileExts[$field] = $files->getClientOriginalExtension();
+    //         } else {
+    //             // Agar file upload nahi hui to null store karein
+    //             $multipleFiles[$field] = null;
+    //             $fileSizes[$field] = null;
+    //             $fileExts[$field] = null;
+    //         }
+    //     }
+
+    //     $showFile->update([
+    //         // 'name' => $multipleFiles['file2'] ?? $file2,
+    //         'name' => $fileSizes['file2'] ?? $file2,
+    //         'file' =>  $multipleFiles['file'] ?? $file1,
+    //         'file_size' => implode(',', array_filter($fileSizes)), // Empty values hata kar
+    //         'file_ext'  => implode(',', array_filter($fileExts)),
+    //     ]);
+
+    //     return back()->with('success', 'Files updated successfully!');
+    // }
+
+    // store into public 
+    // public function filesFormStore(Request $request)
+    // {
+    //     $file = $request->file("file");
+    //     if ($file) {
+    //         $fileName = now()->timestamp . uniqid() . '.png';
+    //         $file->move(public_path('images'), $fileName);
+    //         // $file->storeAs('myfiles', $fileName, 'public');
+    //     }
+    //     MyFiles::create([
+    //         'name' => $request->name,
+    //         'file' =>  $fileName,
+    //     ]);
+
+    //     return back()->with('success', 'File uploaded successfully!');
+    // }
+
+    // // update into public 
+    // public function updateFile(Request $request, $id)
+    // {
+    //     $showFile = MyFiles::findOrFail($id);
+
+    //     $file = $request->file("file");
+    //     if ($file) {
+    //         $oldPath = 'images/' . $showFile->file;
+    //         if (file_exists($oldPath)) {
+    //             unlink($oldPath);
+    //         }
+    //         $fileName = now()->timestamp . uniqid() . '.png';
+    //         $file->move(public_path('images'), $fileName);
+    //         // $file->storeAs('myfiles', $fileName, 'public');
+    //     }
+
+    //     $showFile->update([
+    //         'name' => $request->name,
+    //         'file' =>  $fileName ?? $showFile->file,
+    //     ]);
+
+    //     return back()->with('success', 'File uploaded successfully!');
+    // }
+
+
+    public function filesFormStore(Request $request){
+    
+                $fields=['file','file2'];
+                $multipleFiles=[];
+                $multipleSizes = [];
+                $multipleExts = [];
+
+    foreach($fields as $field){
+        $files=$request->file($field);
+        if($files){
+            $fileName=now()->timestamp . uniqid() .'.png';
+            $multipleFiles[$field] = $fileName;
+            $multipleSizes[$field] = $files->getSize();
+            $files->move(public_path('images'),$fileName);
+            $multipleExts[$field] = $files->getClientOriginalExtension();
+            
+        } else {
+            // If no file uploaded, set null
+            $multipleFiles[$field] = null;
+            $multipleSizes[$field] = null;
+            $multipleExts[$field] = null;
+        }
+    }
+    MyFiles::create([
+        // 'name' => $request->name,
+        'file' => $multipleFiles['file'],
+        'name' => $multipleFiles['file2'],
+        'file_size' => $multipleSizes['file'] . ',' . $multipleSizes['file2'],
+        'file_ext' => $multipleExts['file'] . ',' . $multipleExts['file2'],
+    ]);
+
+    return back()->with('success', 'File uploaded successfully!');
+    }
+}
